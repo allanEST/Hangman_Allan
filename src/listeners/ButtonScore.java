@@ -75,6 +75,7 @@ public class ButtonScore implements ActionListener {
     private void createScoreboard() {
         DefaultTableModel dtm = new DefaultTableModel();
         table = new JTable(dtm);
+        table.setDefaultEditor(Object.class, null); //Tabeli lahtreid ei saa muuta
 
         // Tabeli päis
         for (String column : header) {
@@ -95,8 +96,8 @@ public class ButtonScore implements ActionListener {
         dialogScore.add(new JScrollPane(table));
         dialogScore.setTitle("Edetabel");
         dialogScore.pack();
-        dialogScore.setLocationRelativeTo(view);
-        dialogScore.setModal(true);
+        dialogScore.setLocationRelativeTo(view); //Edetabel ekraani keskele
+        dialogScore.setModal(true); //Ei lase Edetabel nuppu mitu korda vajutada
         dialogScore.setVisible(true);
     }
 }

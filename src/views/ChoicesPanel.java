@@ -65,7 +65,6 @@ public class ChoicesPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH; // Venitab lahtri laiuse täis. Nagu Excel!
 
         createComponents(); // Teeme KÕIK komponendid ja paneme paneelile pnlComponents
-
         add(pnlComponents); // Paneme komponentide paneeli pnlComponents olemasolevale choicesPanel paneelile
     }
 

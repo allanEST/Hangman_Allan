@@ -3,7 +3,6 @@ package listeners;
 import models.Model;
 import views.View;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,5 +39,11 @@ public class ButtonNew implements ActionListener {
 
         view.setStartGame();
         view.getTxtChar().requestFocus(); // Peale selle nupu klikkimist anna fookus teksti kastile
+
+        String category = view.getCmbCategory().getSelectedItem().toString(); //Kontrollib valitud kategooriat
+        model.setRandomWordByCategory(category); //Valitud kategooria põhjal juhuslik sõna
+        String addSpaces = model.spaceBetweenChars(model.getHiddenWord().toString());
+        view.getLblGuessWord().setText(addSpaces); //Paneb sõna lblGuessWord'ile
+        //System.out.println(model.getRandomWord()); //Kontrolliks sõna terminali
     }
 }

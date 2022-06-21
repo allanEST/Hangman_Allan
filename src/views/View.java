@@ -34,7 +34,6 @@ public class View extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Et aken sulguks
         this.setLayout(new BorderLayout()); // Layout
 
-
         this.model = model; // View tahab ka modelit kasutada
 
         choicesPanel = new ChoicesPanel(model, this); // Teeme ülemise paneeli
@@ -145,7 +144,9 @@ public class View extends JFrame {
         getBtnSend().setEnabled(true); // Saada täht nuppu saab kasutada
         getBtnCancel().setVisible(true);   // Mängu saab katkestada
         //getLblWrongInfo().setText("Valesti 0 täht(e). "); // Muuda vigade teavitus vaikimisi tekstiks
-        //getLblWrongInfo().setForeground(Color.RED); // Muuda teksti värv vaikimsii mustaks
+        //getLblWrongInfo().setForeground(Color.RED); // Muuda teksti värv vaikimsi punaseks
+        getLblGuessWord().setVisible(true);
+        model.getMissedCharacter().clear(); //Tühjendab valesti arvatud tähte listi
     }
     /**
      * Seadistab mängu LÕPPSEISU nuppude ja tekstiväljadega seoses. See kustuda siis kui mängu lõpp tulemus on teada
@@ -160,6 +161,7 @@ public class View extends JFrame {
         getBtnCancel().setVisible(false);  // Mängu ei saa enam katkestada
         getTxtChar().setText("");   // Sisestatud tähe tühjendamine
         getLblWrongInfo().setText("Valesti 0 täht(e). "); // Muuda vigade teavitus vaikimisi tekstiks
-        getLblWrongInfo().setForeground(Color.BLACK); // Muuda teksti värv vaikimsii mustaks
+        getLblWrongInfo().setForeground(Color.BLACK); // Muuda teksti värv vaikimsi mustaks
+        getLblGuessWord().setVisible(false);
     }
 }

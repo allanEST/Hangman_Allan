@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +37,22 @@ public class Model {
      * Andmebaasi ühendust algselt pole
      */
     Connection connection = null;
-
+    /**
+     * Juhuslik sõna, mis genereeritakse andmebaasist
+     */
+    private String randomWord;
+    /**
+     * Andmebaasist võetud sõna, mille kõik tähed pole nähtavad
+     */
+    private StringBuilder hiddenWord;
+    /**
+     * Valesti arvatud tähtede list
+     */
+    private List<String> missedCharacter = new ArrayList<>();
+    /**
+     * Valesti arvatud tähtede arv
+     */
+    private int missedCharCount;
     /**
      * Konstruktor
      */
@@ -84,6 +101,26 @@ public class Model {
         }
     }
     /**
+     * Andmete lisamine andmebaasi, kasutades objekti DataScore
+     */
+    public void scoreInsert(DataScores winnerScore){
+        String sql = "INSERT INTO scores (playertime, playername, guessword, wrongcharacters) VALUES (?, ?, ?, ?)";
+        try{
+            Connection conn = this.dbConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            DateTimeFormatter formatDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String playerTime = winnerScore.getGameTime().format(formatDate);
+            stmt.setString(1, playerTime);
+            stmt.setString(2, winnerScore.getPlayerName());
+            stmt.setString(3, winnerScore.getGuessWord());
+            stmt.setString(4, winnerScore.getMissingLetters());
+            stmt.executeUpdate();
+            scoreSelect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
      * SELECT lause tabeli words sisu lugemiseks ja info dataWords listi lisamiseks
      */
     public void wordsSelect() {
@@ -109,6 +146,18 @@ public class Model {
             throw new RuntimeException(e);
         }
     }
+    /**
+     * Meetod lisamaks arvatava sõna vahele tühikuid
+     */
+    public String spaceBetweenChars(String word) {
+        String[] wordCharArray = word.split(""); //Tükeldab sõna tähtedeks
+        StringJoiner join = new StringJoiner(" ");
+        for (String w : wordCharArray){
+            join.add(w);
+            //System.out.println(w);
+        }
+        return join.toString();
+    }
 
     // SETTERS
     /**
@@ -121,6 +170,47 @@ public class Model {
         for(int x = 0; x < unique.size(); x++) {
             categories[x+1] = unique.get(x);
         }
+    }
+
+    /**
+     * Setter valesti arvatud tähtede arvule
+     * @param missedCharCount
+     */
+    public void setMissedCharCount(int missedCharCount) {
+        this.missedCharCount = missedCharCount;
+    }
+    /**
+     * Kategooria järgi juhusliku sõna valimine
+     */
+    public void setRandomWordByCategory(String category){
+        List<String> wordsList = new ArrayList<>(); //Tühi list sõnade jaoks
+        Random random = new Random(); //muutuja random defineerimine, et teha juhuslik sõna valik
+        String randomWord; //Juhuslik valitud sõna
+        if (category.equalsIgnoreCase("Kõik kategooriad")){ //Võrdleb, kas valik tehakse kõikide kategooriate seast
+            randomWord = dataWords.get(random.nextInt(dataWords.size())).getWord();
+        } else {
+            for (DataWords word : dataWords){
+                if (category.equalsIgnoreCase(word.getCategory())) { //Lisab valitud kategooriast sõnad wordsListi
+                    //System.out.println(word.getWord());
+                    wordsList.add(word.getWord());
+                }
+            }
+            randomWord = wordsList.get(random.nextInt(wordsList.size())); //Valib juhusliku sõna wordsListist
+        }
+        this.randomWord = randomWord.toUpperCase(); //Kuvab sõna ja teeb kõik tähed suureks
+        hideWord(); //Tekitab peidetud sõna
+    }
+    public void hideWord(){
+        StringBuilder newWord = new StringBuilder(this.randomWord);
+        for (int i = 1; i < this.randomWord.length() - 1; i++){ //kõik stringi tähted alakriipsudeks v.a esimene ja viimane
+            char toCheck = newWord.charAt(i);
+            char firstChar = newWord.charAt(0);
+            char lastChar = newWord.charAt(newWord.length()-1);
+            if (toCheck != firstChar && toCheck != lastChar){ //Esimese ja viimase tähega samad tähed mitte peidetuks
+                newWord.setCharAt(i, '_');
+            }
+        }
+        this.hiddenWord = newWord;
     }
 
     // GETTERS
@@ -144,5 +234,17 @@ public class Model {
      */
     public List<DataWords> getDataWords() {
         return dataWords;
+    }
+    public String getRandomWord() {
+        return randomWord;
+    }
+    public StringBuilder getHiddenWord() {
+        return hiddenWord;
+    }
+    public List<String> getMissedCharacter() {
+        return missedCharacter;
+    }
+    public int getMissedCharCount() {
+        return missedCharCount;
     }
 }
