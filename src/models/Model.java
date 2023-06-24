@@ -202,13 +202,15 @@ public class Model {
     }
     public void hideWord(){
         StringBuilder newWord = new StringBuilder(this.randomWord);
-        for (int i = 1; i < this.randomWord.length() - 1; i++){ //kõik stringi tähted alakriipsudeks v.a esimene ja viimane
-            char toCheck = newWord.charAt(i);
-            char firstChar = newWord.charAt(0);
-            char lastChar = newWord.charAt(newWord.length()-1);
-            if (toCheck != firstChar && toCheck != lastChar){ //Esimese ja viimase tähega samad tähed mitte peidetuks
-                newWord.setCharAt(i, '_');
-            }
+        for (int i = 0; i < this.randomWord.length(); i++){
+            //kõik stringi tähted alakriipsudeks v.a esimene ja viimane siis (int i = 1; i < this.randomWord.length() - 1; i++)
+//            char toCheck = newWord.charAt(i);
+//            char firstChar = newWord.charAt(0);
+//            char lastChar = newWord.charAt(newWord.length()-1);
+//            if (toCheck != firstChar && toCheck != lastChar){ //Esimese ja viimase tähega samad tähed mitte peidetuks
+//                newWord.setCharAt(i, '_');
+//            }
+            newWord.setCharAt(i, '_');
         }
         this.hiddenWord = newWord;
     }
